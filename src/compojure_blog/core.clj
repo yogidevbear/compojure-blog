@@ -20,9 +20,9 @@
             [:title "My blog running on Clojure!"]]
           [:body
             [:h1 "Welcome"]
-            [:p (str (select-keys (edn/read-string data) [:categories]))]
+            [:p (str (:categories (edn/read-string data)))]
             [:ul
-              (for [category (select-keys (edn/read-string data) [:categories])]
+              (for [category (:categories (edn/read-string data))]
                 [:li category])]]])))
   (route/not-found "Page not found"))
 
