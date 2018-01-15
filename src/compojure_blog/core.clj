@@ -17,6 +17,12 @@
         [:title (:head-title attributes)]
         [:title "My blog running on Clojure!"])]))
 
+(defn html-nav []
+  "Outputs the page navigation"
+  (hiccup/html
+    [:nav
+      [:a {:href "/"} "Home"]]))
+
 (defroutes app
   (GET "/" []
     (let [data (slurp-file "../resources/data.edn")]
@@ -24,6 +30,7 @@
         [:html
           (html-head {})
           [:body
+            (html-nav)
             [:h1 "Welcome"]
             [:ul
               (for [category (:categories (edn/read-string data))]
@@ -43,6 +50,7 @@
         (hiccup/html
           (html-head {:head-title (:title post)})
           [:body
+            (html-nav)
             [:h1 (:title post)]
             [:div (:content post)]]))))
   (route/not-found "Page not found"))
