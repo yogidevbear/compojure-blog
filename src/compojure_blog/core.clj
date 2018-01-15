@@ -9,21 +9,42 @@
 (defn slurp-file [filename]
   (slurp (io/resource filename)))
 
+(defn html-head [attributes]
+  "Takes a hash-set of attributes for elements within in html <head> tag"
+  (hiccup/html
+    [:head
+      (if (:head-title attributes)
+        [:title (:head-title attributes)]
+        [:title "My blog running on Clojure!"])]))
+
 (defroutes app
   (GET "/" []
     (let [data (slurp-file "../resources/data.edn")]
-      ;(select-keys (edn/read-string data) [:categories]))
-      ;(select-keys (edn/read-string data) [:authors]))
       (hiccup/html
         [:html
-          [:head
-            [:title "My blog running on Clojure!"]]
+          (html-head {})
           [:body
             [:h1 "Welcome"]
-            [:p (str (:categories (edn/read-string data)))]
             [:ul
               (for [category (:categories (edn/read-string data))]
-                [:li category])]]])))
+                [:li category])]
+            (for [post (:posts (edn/read-string data))]
+              [:div
+                [:h2
+                  [:a {:href (str "/post/" (:id post))}
+                    (:title post)]]
+                [:p (:excerpt post)]
+                [:p
+                  [:a {:href (str "/post/" (:id post))}
+                    "Read more..."]]])]])))
+  (GET "/post/:id" [id]
+    (let [data (slurp-file "../resources/data.edn")]
+      (let [post (first (filter #(= "1" (:id %)) (:posts (edn/read-string data))))]
+        (hiccup/html
+          (html-head {:head-title (:title post)})
+          [:body
+            [:h1 (:title post)]
+            [:div (:content post)]]))))
   (route/not-found "Page not found"))
 
 (defn -main []
