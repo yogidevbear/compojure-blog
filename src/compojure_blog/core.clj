@@ -15,7 +15,10 @@
     [:head
       (if (:head-title attributes)
         [:title (:head-title attributes)]
-        [:title "My blog running on Clojure!"])]))
+        [:title "My blog running on Clojure!"])
+      (if (:head-link-css attributes)
+        (for [css (:head-link-css attributes)]
+          [:link {:rel "stylesheet" :href css}]))]))
 
 (defn html-nav []
   "Outputs the page navigation"
@@ -48,11 +51,12 @@
     (let [data (slurp-file "../resources/data.edn")]
       (let [post (first (filter #(= id (:id %)) (:posts (edn/read-string data))))]
         (hiccup/html
-          (html-head {:head-title (:title post)})
+          (html-head {:head-title (:title post) :head-link-css ["/main.css"]})
           [:body
             (html-nav)
             [:h1 (:title post)]
             [:div (:content post)]]))))
+  (route/resources "/")
   (route/not-found "Page not found"))
 
 (defn -main []
