@@ -46,7 +46,7 @@
                     "Read more..."]]])]])))
   (GET "/post/:id" [id]
     (let [data (slurp-file "../resources/data.edn")]
-      (let [post (first (filter #(= "1" (:id %)) (:posts (edn/read-string data))))]
+      (let [post (first (filter #(= id (:id %)) (:posts (edn/read-string data))))]
         (hiccup/html
           (html-head {:head-title (:title post)})
           [:body
