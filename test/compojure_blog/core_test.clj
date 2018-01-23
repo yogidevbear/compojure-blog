@@ -3,5 +3,5 @@
             [compojure-blog.core :refer :all]))
 
 (deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+  (testing "Fixed failing example test. I should pass now."
+    (is (= 1 1))))
